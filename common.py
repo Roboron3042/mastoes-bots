@@ -6,7 +6,8 @@ def get_api(url, token_name = ""):
         try:
             file = open('token/' + token_name, 'r')
         except FileNotFoundError:
-            sys.exit()
+            print('Token not found for ' + token_name)
+            exit()
         else:
             token = file.read().splitlines()[0]
             file.close()
@@ -36,4 +37,21 @@ def list_append(name, value):
     file = open('list/' + name, 'a')
     file.write(value + '\n')
     file.close()
+
+# It is not safe to get notifications from "last_id" because some may have been deleted
+def get_new_notifications(api, bot_name, types=None):
+    last_notifications=list_read(bot_name + '_last_notifications')
+    notifications = api.notifications(types=types)
+    new_notifications = []
+    new_notifications_ids = []
+
+    for i in range(0, len(notifications) // 2):
+        if str(notifications[i]['id']) not in last_notifications:
+            new_notifications.append(notifications[i])
+
+    for n in notifications:
+        new_notifications_ids.append(n['id'])
+
+    list_write(bot_name + "_last_notifications", new_notifications_ids)
+    return new_notifications
 

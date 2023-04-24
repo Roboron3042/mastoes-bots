@@ -49,7 +49,9 @@ excluded_domains = [
     'loa.masto.host',
     'bizkaia.social',
     #'mstdn.mx',
-    'federa.social'
+    'federa.social',
+    # Non-spanish accounts >:(
+    'sportsbots.xyz'
 ]
 
 bot_name = 'federabot'
@@ -57,8 +59,9 @@ api_mastoes = get_api('masto.es', 'rober')
 following = list_read(bot_name)
 date_recent = datetime.today() - timedelta(days=7)
 
-def check_timeline(domain, timeline_name = 'public'):
-    api_external = get_api(domain)
+def check_timeline(domain, timeline_name = 'public', api_external=None):
+    if api_external is None:
+        api_external = get_api(domain)
     last_id = list_read(bot_name + "_last_id_" + domain)[0]
     timeline = api_external.timeline(
         timeline=timeline_name, 
@@ -80,7 +83,7 @@ def check_timeline(domain, timeline_name = 'public'):
             and username not in following
         ):
             date_created = post['account']['created_at'].replace(tzinfo=None)
-            if date_created > date_recent and user_domain == 'mastodon.social':
+            if date_created > date_recent and timeline_name == 'local' and user_domain == 'mastodon.social':
                 print("New user: " + username)
                 api_mastoes.status_post("@" + username + " " + get_message(user_domain), visibility="direct")
             print("Following: " + username)
@@ -94,5 +97,11 @@ def check_timeline(domain, timeline_name = 'public'):
     if len(timeline) > 0:
         list_write(bot_name + "_last_id_" + domain, [timeline[0]['id']])
 
-check_timeline('masto.es')
-check_timeline('mastodon.social', 'local')
+api=get_api('masto.es', bot_name)
+check_timeline('masto.es', api_external=api)
+
+api=get_api('mastodon.social', bot_name + "_mastodon_social")
+check_timeline('mastodon.social', 'local', api_external=api)
+check_timeline('mastodon.social', 'public', api_external=api)
+
+
