@@ -12,6 +12,8 @@ api_mastoes = get_api('masto.es', bot_name)
 max_posts=20
 warned=[]
 
+following = list_read(bot_name + "_following")
+
 def check_timeline(domain, api_external, timeline_name = 'local'):
     last_ids = list_read(bot_name + "_" + domain + "_last_ids")
     warned.extend(list_read(bot_name + "_" + domain))
@@ -21,7 +23,7 @@ def check_timeline(domain, api_external, timeline_name = 'local'):
         new_last_ids.append(post['id'])
     for i in range(0, len(timeline) - 2):
         post = timeline[i]
-        if str(post['id']) not in last_ids and (str(post['account']['acct']) not in warned or timeline_name == 'home'): 
+        if str(post['id']) not in last_ids and (str(post['account']['acct']) not in warned or (timeline_name == 'home' and post['account']['acct'] in following)): 
             for media in post['media_attachments']:
                 if media['description'] is None:
                     print('Warning ' + post['account']['acct'])
@@ -34,8 +36,11 @@ def check_timeline(domain, api_external, timeline_name = 'local'):
 
 notifications = get_new_notifications(api_mastoes, bot_name, types=['follow'])
 for n in notifications:
-    print("Following: " + n['account']['acct'])
-    api_mastoes.account_follow(n['account']['id'])
+    if n['account']['acct'] not in following:
+        print("Following: " + n['account']['acct'])
+        api_mastoes.account_follow(n['account']['id'])
+        following.append(n['account']['acct'])
+        list_append(bot_name + "_following", n['account']['acct'])
 
 
 check_timeline('masto.es', api_mastoes)
