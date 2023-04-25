@@ -5,6 +5,9 @@ from common import list_write
 from common import get_new_notifications
 import json
 import os
+import click
+import click_config_file
+
 
 class load_custom_messages():
     def __init__(self, custom_message_file):
@@ -17,10 +20,10 @@ class describot():
     def __init__(self, **kwargs):
         # Initialization
         self.kwargs = kwargs
-        self.custom_messages = load_custom_messages(self.kwargs['custom_message_file'])
+        self.custom_messages = load_custom_messages(self.kwargs['custom_message_file']).custom_messages
+        messages = self.custom_messages[self.kwargs['language']]['describot']
         bot_name = messages['describot']['bot_name']
-
-        messages = self.custom_messages[self.kwargs['language']]
+        
 
         api_internal = get_api(self.kwargs['instance_name'], bot_name)
         max_posts=20
@@ -41,7 +44,7 @@ class describot():
                     for media in post['media_attachments']:
                         if media['description'] is None:
                             print('Warning ' + post['account']['acct'])
-                            api_internal.status_reply(post, message, visibility="unlisted")
+                            api_internal.status_reply(post, messages['describot']['mensaje'], visibility="unlisted")
                             warned.append(post['account']['acct'])
                             if domain != 'home':
                                 list_append(bot_name + "_" + domain, post['account']['acct'])
