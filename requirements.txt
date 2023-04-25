@@ -2,3 +2,4 @@ click
 click_config_file
 Jinja2
 Mastodon.py
+bs4
