@@ -1,12 +1,20 @@
+#!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+
 from bs4 import BeautifulSoup
 from common import get_api
 from common import list_append
 from common import list_read
 from common import list_write
+from common import status_reply
+import mastodon
 import json
 import os
 import click
 import click_config_file
+import logging
+from logging.handlers import SysLogHandler
+import sys
 
 
 class load_custom_messages():
@@ -20,6 +28,11 @@ class apreciabot():
     def __init__(self, **kwargs):
         # Initialization
         self.kwargs = kwargs
+        if 'log_file' not in kwargs or kwargs['log_file'] is None:
+            log_file = os.path.join(os.environ.get('HOME', os.environ.get('USERPROFILE', os.getcwd())), 'log', 'apreciabot.log')
+        self.kwargs['log_file'] = log_file
+        self._init_log()
+
         self.custom_messages = load_custom_messages(self.kwargs['custom_message_file']).custom_messages
         bot_name = self.custom_messages[self.kwargs['language']]['apreciabot']['bot_name']
 
@@ -44,7 +57,7 @@ class apreciabot():
         # Some notifications may have been deleted since last fetch
         # Therefore, it is better to check less than the maximum number of notifications
         if len(notifications) < 1:
-            print(self.custom_messages[self.kwargs['language']]['apreciabot']['no_notifications'])
+            self._log.info(self.custom_messages[self.kwargs['language']]['apreciabot']['no_notifications'])
         else:
 #            for i in range(0, max_notifications - 5):
 # # (adelgado) I'm not sure why this previous loop, but if there are less than 5 notifications,
@@ -62,12 +75,12 @@ class apreciabot():
                             target = "@" + content[1]
                             user = "@" + n['account']['acct']
                         except:
-                            api.status_reply(n['status'], mensaje_error)
+                            status_reply(api, n['status'], mensaje_error)
                             continue
                         # The bot is meant to be anonymous so only allow directs
                         if n['status']['visibility'] == "direct":
                             if user == target:
-                                api.status_reply(n['status'], mensaje_mismo, visibility="unlisted")
+                                status_reply(api, n['status'], mensaje_mismo, visibility="unlisted")
                             else:
                                 # Find account if it is not known by the server
                                 api.search(target, result_type="accounts")
@@ -77,7 +90,7 @@ class apreciabot():
                                     api.status_post(user + mensaje_no_encontrado, in_reply_to_id=n['status']['id'], visibility="direct" )
                                 else:
                                     if "nobot" in bio['note']:
-                                        api.status_reply(n['status'], mensaje_nobot)
+                                        status_reply(api, n['status'], mensaje_nobot)
                                     else:
                                         #api.status_post(mensaje + target + "!", in_reply_to_id=n['status']['id'], visibility="unlisted")
                                         if ("croqueta" in content 
@@ -88,13 +101,50 @@ class apreciabot():
                                             new_status = api.status_post(target + " " + mensaje_croqueta, visibility="unlisted")
                                         else: 
                                             new_status = api.status_post(mensaje + target + "!", visibility="unlisted")
-                                        api.status_reply(n['status'], mensaje_muestra_aprecio_enviada + new_status['url'], visibility="direct")
+                                        status_reply(api, n['status'], mensaje_muestra_aprecio_enviada + new_status['url'], visibility="direct")
                         elif first_mention == "@" + bot_name and n['status']['in_reply_to_id'] == None:
-                            api.status_reply(n['status'], mensaje_aviso, visibility='direct')
+                            status_reply(api, n['status'], mensaje_aviso, visibility='direct')
 
         list_write(bot_name, new_last_ids)
 
+    def _init_log(self):
+        ''' Initialize log object '''
+        self._log = logging.getLogger("apreciabot")
+        self._log.setLevel(logging.DEBUG)
+
+        sysloghandler = SysLogHandler()
+        sysloghandler.setLevel(logging.DEBUG)
+        self._log.addHandler(sysloghandler)
+
+        streamhandler = logging.StreamHandler(sys.stdout)
+        streamhandler.setLevel(logging.getLevelName(self.kwargs.get("debug_level", 'INFO')))
+        self._log.addHandler(streamhandler)
+
+        if 'log_file' in self.kwargs:
+            log_file = self.kwargs['log_file']
+        else:
+            home_folder = os.environ.get('HOME', os.environ.get('USERPROFILE', ''))
+            log_folder = os.path.join(home_folder, "log")
+            log_file = os.path.join(log_folder, "apreciabot.log")
+
+        if not os.path.exists(os.path.dirname(log_file)):
+            os.mkdir(os.path.dirname(log_file))
+
+        filehandler = logging.handlers.RotatingFileHandler(log_file, maxBytes=102400000)
+        # create formatter
+        formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+        filehandler.setFormatter(formatter)
+        filehandler.setLevel(logging.DEBUG)
+        self._log.addHandler(filehandler)
+        return True
+
 @click.command()
+@click.option("--debug-level", "-d", default="INFO",
+    type=click.Choice(
+        ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"],
+        case_sensitive=False,
+    ), help='Set the debug level for the standard output.')
+@click.option('--log-file', '-L', help="File to store all debug messages.")
 @click.option('--language', '-l', default='es', help="Language.")
 @click.option('--custom-message-file', '-j', default='custom_messages.json', help='JSON file containing the messages.')
 @click.option('--instance-name', '-i', default='masto.es', help='Instance FQDN')

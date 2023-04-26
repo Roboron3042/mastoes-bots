@@ -13,7 +13,7 @@
       "no_notifications": "No hay notificationes"
     },
     "describot": {
-      "mensaje": "¡Hola! He detectado que has publicado imágenes o vídeo sin texto alternativo. Añadir una descripción de texto alternativa a tus vídeos e imágenes es esencial para que las personas con alguna discapacidad visual puedan disfrutar de nuestras publicaciones. \n\n Por favor, considera añadir texto alternativo a tus publicaciones la próxima vez (o edita esta publicación para añadírselo). Si necesitas ayuda para saber cómo hacerlo, consulta la publicación fijada en mi perfil: https://masto.es/@TeLoDescribot/110249937862873987 \n\n ¡Gracias por hacer de este espacio un lugar más accesible para todos! \n\n Bip bop. Esta es una cuenta automatizada, si no quieres que te mencione más, eres libre de bloquearme.",
+      "mensaje": "¡Hola! Has publicado imágenes o vídeo sin texto alternativo. Añadir una descripción de texto alternativa a tus vídeos e imágenes es esencial para que las personas con alguna discapacidad visual puedan disfrutar de nuestras publicaciones. \n\n Por favor, considera añadir texto alternativo a tus publicaciones la próxima vez (o edita esta publicación para añadírselo). Si necesitas ayuda para saber cómo hacerlo, consulta la publicación fijada en mi perfil: https://masto.es/@TeLoDescribot/110249937862873987 \n\n ¡Gracias por hacer de este espacio un lugar más accesible para todos! \n\n Bip bop. Esta es una cuenta automatizada, si no quieres que te mencione más, eres libre de bloquearme.",
       "bot_name": "describot"
     },
     "federabot": {

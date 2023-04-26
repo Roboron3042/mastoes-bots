@@ -1,20 +1,21 @@
-from mastodon import Mastodon
+import mastodon
 from sys import exit
+import re
 
 def get_api(url, token_name = ""):
     if token_name:
         try:
             file = open('token/' + token_name, 'r')
         except FileNotFoundError:
-            print('Token not found for ' + token_name)
+            print('Token not found for ' + token_name + ' in "token/'+ token_name + '"')
             exit()
         else:
-            token = file.read().splitlines()[0]
+            token = file.read().splitlines()[0].strip()
             file.close()
     else:
         token = ""
 
-    return Mastodon(access_token = token, api_base_url = url)
+    return mastodon.Mastodon(access_token = token, api_base_url = url)
 
 def list_read(name):
     try:
@@ -55,3 +56,23 @@ def get_new_notifications(api, bot_name, types=None):
     list_write(bot_name + "_last_notifications", new_notifications_ids)
     return new_notifications
 
+def status_reply(api, post, message, visibility):
+    try:
+        api.status_reply(post, message, visibility=visibility)
+    except mastodon.errors.MastodonAPIError as error:
+        match_len_limit = re.search(r'Text character limit of ([0-9]*) exceeded', str(error))
+        if match_len_limit:
+            max_post_size = int(match_len_limit.group(1)) - 10
+            #split_message = [message[i:i+max_post_size] for i in range(0, len(message), max_post_size)]
+            split_message = message.split('\n\n')
+            counter = 1
+            for chunk_message in split_message:
+                try:
+                    api.status_reply(post, f"{chunk_message} {counter}/{len(split_message)}", visibility=visibility)
+                    counter += 1
+                except mastodon.errors.MastodonAPIError as error:
+                    print(f"Error posting: {error}")
+                    exit(1)
+        else:
+            print(f"Error posting: {error}")
+            exit(1)
