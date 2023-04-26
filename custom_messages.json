@@ -1,0 +1,23 @@
+{
+  "es": {
+    "apreciabot": {
+      "mensaje": "Alguien que te aprecia mucho quiere recordarte que eres una persona maravillosa :ablobcatheartsqueeze: ¡Sigue así, ",
+      "mensaje_croqueta": "Alguien que te aprecia mucho quiere enviarte croquetas :croqueta: :croqueta: :croqueta:",
+      "mensaje_mismo": "La persona más importante que debes apreciar eres tú. ¡Eres increíble! ❤",
+      "mensaje_nobot": "La cuenta objetivo tiene la etiqueta #nobot en su biografía. ¡No tengo poder aquí!",
+      "mensaje_aviso": "Has intentado apreciar a alguien pero no has usado un mensaje directo/privado. ¡Tienes que mencionarme en un mensaje directo/privado para que funcione!",
+      "mensaje_error": "No pude procesar tu apreciación. ¡Asegúrate de no incluir saltos de línea ni otros caracteres extraños! El mensaje debería ser tal que así: \"@apreciabot@masto.es usuario@servidor\n",
+      "mensaje_no_encontrado": " No se pudo encontrar la cuenta del usuario especificado. \n\nRevisa que has escrito bien  la cuenta con el formato \"usuario@servidor\" (por ejemplo, rober@masto.es, excluyendo el primer @ para evitar mencionarlo).\n\nSi lo has mencionado por error, ¡borra el mensaje antes de que se de cuenta!",
+      "bot_name": "love",
+      "mensaje_muestra_aprecio_enviada": "Tu muestra de aprecio ha sido enviada ❤️ ",
+      "no_notifications": "No hay notificationes"
+    },
+    "describot": {
+      "mensaje": "¡Hola! Has publicado imágenes o vídeo sin texto alternativo. Añadir una descripción de texto alternativa a tus vídeos e imágenes es esencial para que las personas con alguna discapacidad visual puedan disfrutar de nuestras publicaciones. \n\n Por favor, considera añadir texto alternativo a tus publicaciones la próxima vez (o edita esta publicación para añadírselo). Si necesitas ayuda para saber cómo hacerlo, consulta la publicación fijada en mi perfil: https://masto.es/@TeLoDescribot/110249937862873987 \n\n ¡Gracias por hacer de este espacio un lugar más accesible para todos! \n\n Bip bop. Esta es una cuenta automatizada, si no quieres que te mencione más, eres libre de bloquearme.",
+      "bot_name": "describot"
+    },
+    "federabot": {
+      "mensaje": "¡Hola! Veo que es tu primera vez en Mastodon, ¡te doy la bienvenida si así es!\n\nSoy Roberto, el administrador del servidor de Mastodon en español https://masto.es. Ya ves que aunque estemos en servidores diferentes, somos capaces de comunicarnos gracias al modelo federado de Mastodon :mastodance:\n\nAunque yo no sea tu administrador en {{ user_domain }}, si necesitas ayuda para empezar puedes consultar la guía que he preparado para mis usuarios: https://masto.es/@rober/109412552189056438\n\nY si tienes alguna duda más, estaré encantado de ayudarte, solo responde a este mensaje privado 🙂"
+    }
+  }
+}

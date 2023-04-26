@@ -15,3 +15,8 @@ Revisa las notificaciones de un usuario con los privilegios suficientes para bus
 - Python 3
 - Mastodon.py https://github.com/halcy/Mastodon.py
 - Apreciabot: bs4
+
+
+## Tranlations format
+
+Use the custom_message.json file to enter a dictionary of languagues with custom messages. You can use to translate or to customize the bots. The same keys in the root of the file (in the example 'es') should be used as the option language in the command line or the configuration file.
