@@ -8,7 +8,7 @@ notifications = api.notifications(types=["admin.sign_up"], limit=5)
 
 # Vietnamese accounts
 for n in notifications:
-    if "Việt Nam" in n['account']['note']:
+    if "Việt Nam" in n['account']['note'] or "chuẩn" in n['account']['note']:
         api.admin_account_moderate(n['account']['id'], action='suspend', send_email_notification=False)
         list_append(botname + "_banned", n['account']['acct'])
 
