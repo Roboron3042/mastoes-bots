@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 from common import get_api
 from common import list_append
@@ -21,6 +22,8 @@ last_ids = list_read(bot_name)
 max_notifications=10
 new_last_ids=[]
 notifications = api.notifications(types=["mention"],limit=max_notifications)
+no_unicode_spaces_pattern = r"[\u200B-\u200D\u202A\u202C\uFEFF]"
+
 for n in notifications:
     new_last_ids.append(n['id'])
 
@@ -30,7 +33,8 @@ for i in range(0, max_notifications - 5):
     n = notifications[i]
     if str(n['id']) not in last_ids:
         # Mentions data are HTML paragraphs so we delete everything between <> to clean it up
-        content = BeautifulSoup(n['status']['content'], "html.parser").get_text().split(" ")
+        rawContent = BeautifulSoup(n['status']['content'], "html.parser").get_text()
+        content = re.sub(no_unicode_spaces_pattern, "", rawContent).split(" ")
         try:
             first_mention = content[0]
             target = "@" + content[1]
