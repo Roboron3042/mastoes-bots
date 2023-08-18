@@ -1,5 +1,6 @@
 from common import get_api
 from common import list_read
+from common import list_append
 from common import list_write
 
 # Messages
@@ -9,28 +10,25 @@ message = "¡Hola! Soy Roberto, el administrador de este servidor de Mastodon :m
 # Initialization
 bot_name = 'bienvenibot'
 api = get_api('masto.es', 'rober')
-last_ids = list_read(bot_name)
-new_last_ids=[]
-max_notifications=5
-notifications = api.notifications(limit=max_notifications)
-#notifications = mastodon.notifications(types=["admin.sign_up"], limit=5)
+users = list_read(bot_name)
+users_limited = list_read(bot_name + "_limited")
+users_limited_new = []
+notifications = api.notifications(types=["admin.sign_up"])
+
+def try_dm(user):
+    try:
+        api.status_post("@" + user + " " + message, visibility="direct")
+    except:
+        users_limited_new.append(user)
+
+for user in users_limited:
+    try_dm(user)
+
 for n in notifications:
-    new_last_ids.append(n['id'])
+    # Message new users
+    user = n['account']['acct']
+    if n['type'] == "admin.sign_up" and user not in users:
+        list_append(bot_name, user)
+        try_dm(user)
 
-# Some notifications may have been deleted since last fetch
-# Therefore, it is better to check less than the maximum number of notifications
-for i in range(0, max_notifications - 1):
-    n = notifications[i]
-    if str(n['id']) not in last_ids:
-        # Message new users
-        username = n['account']['acct']
-        if n['type'] == "admin.sign_up":
-            api.status_post("@" + username + " " + message, visibility="direct")
-        # Follow any user who interacted with our account
-        #elif not "@" in username:
-        elif n['type'] == "follow":
-            api.account_follow(n['account']['id'])
-        elif n['type'] == "admin.report":
-            api.status_post("@Roboron@im-in.space Informe recibido de " + username, visibility="direct")
-
-list_write(bot_name, new_last_ids)
+list_write(bot_name + "_limited", users_limited_new)

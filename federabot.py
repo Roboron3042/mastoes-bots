@@ -21,47 +21,73 @@ excluded_domains = [
     'mastorol.es',
     'shrimply.social',
     'mstdn.jmiguel.eu',
-    # Relay chocoflan
-    'mk.mistli.net',
-    'izta.mistli.net',
-    'novoa.nagoya',
-    'quey.la',
-    'social.hispabot.freemyip.com',
-    'mastodon.uy',
-    'mstdn.mx',
-    'el-spot.xyz',
-    'mastodonperu.xyz',
+    'mastorock.com',
+    'frikiverse.zone',
     '41020.social',
-    #'mast.lat',
-    'acc4e.com',
-    #'mastodon.com.py',
-    #'shrimply.social',
-    'nonomastodon.redirectme.net',
-    'arguos.com',
-    'social.wikimedia.es',
-    'tarugo.ddns.net',
-    'pleroma.lyricaltokarev.fun',
+    'tuiter.rocks',
+    'mastorock.com',
+    'meetiko.org',
+    'mastodon.cr',
     # Relay nobigtech.es
     'sindicato.social',
-    #'mastodon.uy',
+    'mastodon.uy',
     'red.niboe.info',
     'nobigtech.es',
     'loa.masto.host',
     'bizkaia.social',
-    #'mstdn.mx',
+    'mstdn.mx',
     'federa.social',
     # Non-spanish accounts >:(
-    'sportsbots.xyz'
+    'sportsbots.xyz',
+    'press.coop'
 ]
 
 bot_name = 'federabot'
 api_mastoes = get_api('masto.es', 'rober')
+
 following = list_read(bot_name)
-date_recent = datetime.today() - timedelta(days=7)
+date_recent = datetime.today() - timedelta(days=30)
+
+follows_limited = list_read(bot_name + '_follows_limited')
+dms_limited = list_read(bot_name + '_messages_limited')
+
+list_write(bot_name + "_follows_limited", [])
+list_write(bot_name + "_messages_limited", [])
+
+def try_follow(user_id):
+    try:
+        api_mastoes.account_follow(user_id)
+    except:
+        list_append(bot_name + '_follows_limited', str(user_id))
+        print("Fail to follow. Will retry next time")
+
+def try_dm(username, user_domain):
+    try:
+        api_mastoes.status_post("@" + username + " " + get_message(user_domain), visibility="direct")
+        print("Welcome new user: " + username)
+    except:
+        list_append(bot_name + '_messages_limited', username)
+        print("Fail to welcome new user: " + username + ". Will retry next time")
+
+def check_follows():
+    notifications = api_mastoes.notifications(types=["follow"])
+    for n in notifications:
+        username = n['account']['acct']
+        user_domain = username.split("@")[1] if "@" in username else "masto.es"
+        date_created = n['account']['created_at'].replace(tzinfo=None)
+        if username not in following:
+            print("Following: " + username)
+            try_follow(n['account']['id'])
+            following.append(username)
+            list_append(bot_name, username)
+            if date_created > date_recent and user_domain == 'mastodon.social':
+                try_dm(username, user_domain)
 
 def check_timeline(domain, timeline_name = 'public', api_external=None):
+    
     if api_external is None:
         api_external = get_api(domain)
+    
     last_id = list_read(bot_name + "_last_id_" + domain)[0]
     timeline = api_external.timeline(
         timeline=timeline_name, 
@@ -84,24 +110,38 @@ def check_timeline(domain, timeline_name = 'public', api_external=None):
         ):
             date_created = post['account']['created_at'].replace(tzinfo=None)
             if date_created > date_recent and timeline_name == 'local' and user_domain == 'mastodon.social':
-                print("New user: " + username)
-                api_mastoes.status_post("@" + username + " " + get_message(user_domain), visibility="direct")
+                try_dm(username, user_domain)
             print("Following: " + username)
             user = api_mastoes.search_v2("@" + username + " ", result_type="accounts")["accounts"][0]
             # Retrieve the post, it could be the first
             api_mastoes.search_v2(post['url'], result_type="posts")
-            api_mastoes.account_follow(user['id'])
             following.append(username)
             list_append(bot_name, username)
+            try_follow(user['id'])
 
     if len(timeline) > 0:
         list_write(bot_name + "_last_id_" + domain, [timeline[0]['id']])
 
-api=get_api('masto.es', bot_name)
-check_timeline('masto.es', api_external=api)
+
+print('\nChecking previous attempts...')
+for user_id in follows_limited:
+    try_follow(user_id)
+
+for username in dms_limited:
+    user_domain = username.split("@")[1]
+    try_dm(username, user_domain)
+
+print('\nChecking follows...')
+check_follows()
+
 
 api=get_api('mastodon.social', bot_name + "_mastodon_social")
+print('\nChecking mastodon.social local TL')
 check_timeline('mastodon.social', 'local', api_external=api)
+print('\nChecking mastodon.social federated TL')
 check_timeline('mastodon.social', 'public', api_external=api)
 
 
+print('\nChecking masto.es federated TL')
+api=get_api('masto.es', bot_name)
+check_timeline('masto.es', api_external=api)

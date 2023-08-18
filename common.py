@@ -14,7 +14,7 @@ def get_api(url, token_name = ""):
     else:
         token = ""
 
-    return Mastodon(access_token = token, api_base_url = url)
+    return Mastodon(access_token = token, api_base_url = url, ratelimit_method='throw')
 
 def list_read(name):
     try:
@@ -22,11 +22,12 @@ def list_read(name):
     except FileNotFoundError:
         file = open('list/' + name, 'x')
         file.close()
-        return [""]
+        return []
     else:
         list = file.read().splitlines()
         file.close()
         return list
+
 def list_write(name, values):
     file = open('list/' + name, 'w')
     for value in values:
