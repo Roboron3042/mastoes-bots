@@ -5,7 +5,7 @@ from common import list_write
 from datetime import datetime, timedelta
 
 def get_message(user_domain):
-    return "¡Hola! Veo que es tu primera vez en Mastodon, ¡te doy la bienvenida si así es!\n\nSoy Roberto, el administrador del servidor de Mastodon en español https://masto.es. Ya ves que aunque estemos en servidores diferentes, somos capaces de comunicarnos gracias al modelo federado de Mastodon :mastodance:\n\nAunque yo no sea tu administrador en " + user_domain + ", si necesitas ayuda para empezar puedes consultar la guía que he preparado para mis usuarios: https://masto.es/@rober/109412552189056438\n\nY si tienes alguna duda más, estaré encantado de ayudarte, solo responde a este mensaje privado 🙂"
+    return "¡Hola! Veo que es tu primera vez en Mastodon, ¡te doy la bienvenida!\n\nTe recomiendo que empieces escribiendo una publicación con la etiqueta #presentación para darte a conocer (https://masto.es/@rober/109412552189056438).\n\n¡Espero que tengas un buen comienzo! Si necesitas ayuda, ¡cuenta conmigo!"
 
 excluded_domains = [
     'masto.es',
