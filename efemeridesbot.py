@@ -22,11 +22,14 @@ texts = {i: [] for i in years }
 
 for event in events:
     text = event.get_text()
-    text_year = int(text.split(":")[0].split(u'\xa0')[0].split(" ")[0].split(",")[0])
-    for year in years:
-        if text_year < year:
-            texts[year].append(text)
-            break
+    try:
+        text_year = int(text.split(":")[0].split(u'\xa0')[0].split(" ")[0].split(",")[0])
+        for year in years:
+            if text_year < year:
+                texts[year].append(text)
+                break
+    except:
+        print("Error: " + text)
 
 api = get_api('masto.es', 'efemeridesbot')
 last_id = 0
