@@ -4,7 +4,7 @@ from common import list_append
 from common import list_write
 
 # Messages
-message = "¡Hola! Soy Roberto, el administrador de este servidor de Mastodon :mastodon: (https://masto.es)\n\nTe recomiendo que empieces escribiendo una publicación  con la etiqueta #presentación para darte a conocer (https://masto.es/@rober/109412552189056438).\n\n¡Espero que tengas un buen comienzo! Si necesitas ayuda, ¡cuenta conmigo!"
+message = "¡Hola, te doy la bienvenida a Mastodon :mastodon: en https://masto.es!\n\nTe recomiendo que empieces escribiendo una publicación con la etiqueta #presentación y tus intereses para darte a conocer.\n\n¡Espero que tengas un buen comienzo! Si necesitas ayuda, ¡cuenta conmigo!"
 
 
 # Initialization

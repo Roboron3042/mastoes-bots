@@ -13,6 +13,7 @@ for n in notifications:
         if word in n['account']['note']:
             api.admin_account_moderate(n['account']['id'], action='suspend', send_email_notification=False)
             list_append(bot_name + "_banned", n['account']['acct'])
+            print("banned: " + n['account']['acct'])
 
 # Known spam accounts with similar names
 names = list_read('moderabot_forbidden_names')

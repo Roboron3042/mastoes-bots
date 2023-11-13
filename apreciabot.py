@@ -9,6 +9,7 @@ from common import list_write
 # Messages
 mensaje = "Alguien que te aprecia mucho quiere recordarte que eres una persona maravillosa :ablobcatheartsqueeze: ¡Sigue así, "
 mensaje_croqueta = "Alguien que te aprecia mucho quiere enviarte croquetas :croqueta: :croqueta: :croqueta:"
+mensaje_cumple = ["Alguien me ha revelado que hoy es tu día, ", ". ¡Feliz cumpleaños de su parte! :blobcatbirthday:"]
 mensaje_mismo = "La persona más importante que debes apreciar eres tú. ¡Eres increíble! ❤"
 mensaje_nobot = "La cuenta objetivo tiene la etiqueta #nobot en su biografía. ¡No tengo poder aquí!"
 mensaje_aviso = "Has intentado apreciar a alguien pero no has usado un mensaje directo/privado. ¡Tienes que mencionarme en un mensaje directo/privado para que funcione!"
@@ -23,6 +24,14 @@ max_notifications=10
 new_last_ids=[]
 notifications = api.notifications(types=["mention"],limit=max_notifications)
 no_unicode_spaces_pattern = r"[\u200B-\u200D\u202A\u202C\uFEFF]"
+mode_croqueta_words=["croqueta", "croquetas"]
+mode_cumple_words=["cumple", "cumpleaños", "felicidades"]
+
+def check_mode(mode_words, content):
+    for word in mode_words:
+        if ( (word in content) or ( ('"' + word +'"') in content) ):
+            return True
+    return False
 
 for n in notifications:
     new_last_ids.append(n['id'])
@@ -58,12 +67,10 @@ for i in range(0, max_notifications - 5):
                         api.status_reply(n['status'], mensaje_nobot)
                     else:
                         #api.status_post(mensaje + target + "!", in_reply_to_id=n['status']['id'], visibility="unlisted")
-                        if ("croqueta" in content 
-                            or "croquetas" in content 
-                            or '"croqueta"' in content 
-                            or '"croquetas"' in content
-                        ):
+                        if check_mode(mode_croqueta_words, content):
                             new_status = api.status_post(target + " " + mensaje_croqueta, visibility="unlisted")
+                        elif check_mode(mode_cumple_words, content):
+                            new_status = api.status_post(mensaje_cumple[0] + target + mensaje_cumple[1], visibility="unlisted")
                         else: 
                             new_status = api.status_post(mensaje + target + "!", visibility="unlisted")
                         api.status_reply(n['status'], 'Tu muestra de aprecio ha sido enviada ❤️ ' + new_status['url'], visibility="direct")
