@@ -42,8 +42,9 @@ for i in range(0, max_notifications - 5):
     n = notifications[i]
     if str(n['id']) not in last_ids:
         # Mentions data are HTML paragraphs so we delete everything between <> to clean it up
-        rawContent = n['status']['content'].replace("</br >", " ")
+        rawContent = n['status']['content'].replace("</br >", " ").replace("<br>", " ")
         text = BeautifulSoup(rawContent, "html.parser").get_text()
+        text = re.sub(" +", " ", text)
         content = re.sub(no_unicode_spaces_pattern, "", text).split(" ")
         try:
             first_mention = content[0]
