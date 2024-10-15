@@ -45,8 +45,13 @@ def get_new_notifications(api, bot_name, types=None):
     notifications = api.notifications(types=types)
     new_notifications = []
     new_notifications_ids = []
+    max_notification = 0
+    if len(notifications) < 2:
+        max_notification = len(notifications)
+    else:
+        max_notification = len(notifications) // 2
 
-    for i in range(0, len(notifications) // 2):
+    for i in range(0, max_notification):
         if str(notifications[i]['id']) not in last_notifications:
             new_notifications.append(notifications[i])
 
