@@ -58,8 +58,8 @@ for i in range(0, max_notifications - 5):
                 api.status_reply(n['status'], mensaje_mismo, visibility="unlisted")
             else:
                 # Find account if it is not known by the server
-                api.search(target, result_type="accounts")
                 try:
+                    api.search(target, result_type="accounts")
                     bio = api.account_lookup(target)
                 except:
                     api.status_post(user + mensaje_no_encontrado, in_reply_to_id=n['status']['id'], visibility="direct" )
