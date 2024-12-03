@@ -40,7 +40,11 @@ excluded_domains = [
     'federa.social',
     # Non-spanish accounts >:(
     'sportsbots.xyz',
-    'press.coop'
+    'press.coop',
+    'fedibird.com',
+    # Mirrors
+    'respublicae.eu',
+    'bots.fedi.cr '
 ]
 
 bot_name = 'federabot'
