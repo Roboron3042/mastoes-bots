@@ -61,3 +61,21 @@ def get_new_notifications(api, bot_name, types=None):
     list_write(bot_name + "_last_notifications", new_notifications_ids)
     return new_notifications
 
+women_pronouns = ["she","her","ella","illa"]
+nb_pronouns = ["they","them","elle", "ille"]
+
+def is_gender(pronouns, account):
+    for pronoun in pronouns:
+        if(pronoun in account.note):
+            return True
+        for value in account.fields:
+            if(pronoun in value):
+                return True
+    return False
+
+def get_gender(account):
+    if(is_gender(women_pronouns,account)):
+        return 1
+    if(is_gender(nb_pronouns, account)):
+        return 2
+    return 0
