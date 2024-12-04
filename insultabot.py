@@ -50,7 +50,7 @@ def insultar_insultador(insulto, insultador, status, mensaje):
     mensaje = mensaje.replace("INSULTO", insulto).replace("ARTICULO_INDEFINIDO", articulos_indefinidos[gender])
     api.status_post("@" + insultador.acct + " " + mensaje.replace("INSULTO", insulto), in_reply_to_id=status.id, visibility="unlisted" )
 
-def insultar_insultado(insulto, insultador, insultado, insultado_acct):
+def insultar_insultado(insulto, insultador, insultado, insultado_acct, status):
     gender = get_gender(insultado)
     insulto = get_insulto_inclusivo(insulto, gender)
     mensaje = choice(mensajes)
@@ -64,12 +64,13 @@ def insultar_insultado(insulto, insultador, insultado, insultado_acct):
     mensaje = mensaje.replace("INSULTO", insulto)
     mensaje = mensaje.replace("ARTICULO_INDEFINIDO", articulos_indefinidos[gender])
     mensaje = mensaje.replace("ARTICULO_DEFINIDO", articulos_definidos[gender])
-    api.status_post(mensaje, visibility="unlisted" )
+    reply = api.status_post(mensaje, in_reply_to_id=status.id, visibility="unlisted" )
+    api.status_reblog(reply.id)
 
 bot_name = 'insultabot'
 api = get_api('masto.es', bot_name)
 insultos = list_read(bot_name + "_insultos")
-notifications = get_new_notifications(api, bot_name, "mention,follow")
+notifications = get_new_notifications(api, bot_name, ["mention", "follow"])
 
 for n in notifications:
     insultador = n.account
@@ -122,7 +123,7 @@ for n in notifications:
         for follow in follows:
             if(insultador.url == follow.url):
                 encontrado = True
-                insultar_insultado(choosen_insulto, insultador, insultado, insultado_mencion.acct)
+                insultar_insultado(choosen_insulto, insultador, insultado, insultado_mencion.acct, n.status)
                 break
         if(encontrado == False):
             insultar_insultador(choosen_insulto, insultador, n.status, mensaje_no_amigo)
