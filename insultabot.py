@@ -85,6 +85,7 @@ for n in notifications:
         if(len(menciones) < 2):
             insulto = get_insulto_inclusivo(choosen_insulto, get_gender(insultador))
             api.status_post("@" + insultador.acct + " " + mensaje_insuficientes.replace("INSULTO", insulto), in_reply_to_id=n.status.id, visibility="unlisted" )
+            break
         for mencion in menciones:
             if(mencion.url == "https://masto.es/@rober"):
                 insultar_insultador(choosen_insulto, insultador, n.status, mensaje_creador)
@@ -99,12 +100,11 @@ for n in notifications:
                 break
         if(insultado_mencion == {}):
             break
-        insultado_api = {}
-        if("masto.es" in insultado_mencion.url):
-            insultado_api = api
+        if("@" not in insultado_mencion.acct):
+            dominio_insultado = "masto.es"
         else:
-            domain = insultado_mencion.acct.split("@")[1]
-            insultado_api = get_api(domain)
+            dominio_insultado = insultado_mencion.acct.split("@")[1]
+        insultado_api = get_api(dominio_insultado)
         insultado = insultado_api.account_lookup(insultado_mencion.acct)
         if("nobot" in insultado.note):
             insultar_insultador(choosen_insulto, insultador, n.status, mensaje_nobot)
@@ -120,8 +120,16 @@ for n in notifications:
         else:
             follows = insultado_api.fetch_remaining(follows)
         encontrado = False
+        if("@" not in insultador.acct):
+            insultador_acct_compare = insultador.acct + "@masto.es"
+        else:
+            insultador_acct_compare = insultador.acct
         for follow in follows:
-            if(insultador.url == follow.url):
+            if("@" not in follow.acct):
+                follow_acct_compare = follow.acct + "@" + dominio_insultado
+            else:
+                follow_acct_compare = follow.acct
+            if(insultador_acct_compare == follow_acct_compare):
                 encontrado = True
                 insultar_insultado(choosen_insulto, insultador, insultado, insultado_mencion.acct, n.status)
                 break
