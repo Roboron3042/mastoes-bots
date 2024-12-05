@@ -3,20 +3,21 @@ from random import choice
 
 articulos_indefinidos =["un", "una", "une"]
 articulos_definidos = ["el", "la", "le"]
+vocales_genero = ["o", "a", "e"]
 
-mensaje_seguidores_vacio = "No pude consultar la lista de seguidos de la cuenta mencionada (tal vez está oculta o es demasiado grande). No pude comprobar si es amigo de ARTICULO_INDEFINIDO INSULTO como tú."
-mensaje_no_amigo = "La cuenta mencionada no tiene una relación de seguimiento contigo. Es comprensible que no quiera ser amigo de ARTICULO_INDEFINIDO INSULTO como tú."
+mensaje_seguidores_vacio = "No pude consultar la lista de seguidos de la cuenta mencionada (tal vez está oculta o es demasiado grande). No pude comprobar si tiene relación con ARTICULO_INDEFINIDO INSULTO como tú."
+mensaje_no_amigo = "La cuenta mencionada no tiene una relación de seguimiento contigo. Es comprensible que no quiera tener nada que ver con ARTICULO_INDEFINIDO INSULTO como tú."
 mensaje_nobot = "La cuenta objetivo tiene la etiqueta #nobot en su biografía. ¡No tengo poder aquí, INSULTO!"
 mensaje_mismo = "Hay que ser muy INSULTO para insultarse a uno mismo. Enhorabuena."
 mensaje_creador = "¿Cómo te atreves a intentar insultar a mi creador, INSULTO?"
 mensaje_insuficientes = "Tú, INSULTO, no has escrito suficientes menciones para insultar a nadie."
-mensaje_follow = "Bienvenido al club, INSULTO."
+mensaje_follow = "Bienvenid0 al club, INSULTO."
 
 mensajes = [
     "Según un prestigioso estudio de la universidad de INSULTADOR, eres ARTICULO_INDEFINIDO INSULTO, INSULTADO.",
     "Un comité de expertos liderado por INSULTADOR ha llegado a la conclusión de que INSULTADO es muy INSULTO. Y tienen razón.",
     "INSULTADO, eres un poco INSULTO, me he dado cuenta gracias a INSULTADOR. Háztelo mirar, ¿vale?",
-    "¡INSULTADO, INSULTO! ¿Lo has entendido? Seguramente no, porque aunque INSULTADOR me lo haya dicho, tú eres tan INSULTO que no te das cuenta.",
+    "¡INSULTADO, eres ARTICULO_INDEFINIDO INSULTO! ¿Lo sabías? Seguramente no, porque aunque INSULTADOR me lo haya dicho, tú eres tan INSULTO que no te das cuenta.",
     "INSULTADO que sepas que eres ARTICULO_INDEFINIDO INSULTO, como INSULTADOR ha hecho bien en señalar.",
     "INSULTADOR te concede el dudoso honor de ser ARTICULO_DEFINIDO mastodonte más INSULTO de todos, INSULTADO.",
     "A INSULTADOR le preocupa lo INSULTO que eres, INSULTADO. Pero no mucho.",
@@ -33,7 +34,11 @@ mensajes = [
     "¿Sabes qué hora es, INSULTADOR? ¡La hora de llamar INSULTO a INSULTADO!",
     "INSULTADO te digo que eres ARTICULO_INDEFINIDO INSULTO, y me quedo corto. Pero si quieres INSULTADOR te lo expande.",
     "INSULTADO me han pedido que te diga que eres ARTICULO_INDEFINIDO INSULTO, que no sé muy bien lo que significa, pero tiene que ser algo malo porque me lo ha dicho INSULTADOR.",
-    "INSULTADO ¡INSULTO! ¡INSULTO_2! ¡INSULTO_3! ¡INSULTO_4!\n\nUff, qué ganas le tenía a esta cuenta. Gracias por la oportunidad, INSULTADOR"
+    "INSULTADO ¡INSULTO! ¡INSULTO_2! ¡INSULTO_3! ¡INSULTO_4!\n\nUff, qué ganas le tenía a esta cuenta. Gracias por la oportunidad, INSULTADOR",
+    "Alguien que te aprecia mucho (INSULTADOR) quiere recordarte que eres ARTICULO_INDEFINIDO INSULTO :ablobcatheartsqueeze: ¡Sigue así, INSULTADO!",
+    "En el mundo hay chorrocientos millones de seres humanos, pero solo uno tan INSULTO como tú, INSULTADO. Lo sabemos porque INSULTADOR lo ha comprobado.",
+    "Cuando INSULTADOR creía que no podría encontrar a nadie más INSULTO, encontró a INSULTADO y le demostró que sí que podía.",
+    "Mira, me han pedido que te insulte, INSULTADO, pero la persona que me lo ha pedido, INSULTADOR, me cae fatal y es ARTICULO_INDEFINIDO INSULTO de cuidado, así que esta vez te vas a salvar."
 ]
 
 def get_insulto_inclusivo(insulto, gender):
@@ -77,7 +82,7 @@ for n in notifications:
     if(n.type == "follow"):
         choosen_insulto = choice(insultos)
         insulto = get_insulto_inclusivo(choosen_insulto, get_gender(insultador))
-        api.status_post("@" + insultador.acct + " " + mensaje_follow.replace("INSULTO", insulto), visibility="unlisted" )
+        api.status_post("@" + insultador.acct + " " + mensaje_follow.replace("INSULTO", insulto).replace("0",vocales_genero[get_gender(insultador)]), visibility="unlisted" )
     else:
         choosen_insulto = choice(insultos)
         menciones = n.status.mentions

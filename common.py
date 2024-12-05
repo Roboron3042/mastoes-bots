@@ -66,16 +66,18 @@ nb_pronouns = ["they","them","elle", "ille"]
 
 def is_gender(pronouns, account):
     for pronoun in pronouns:
-        if(pronoun in account.note):
+        if(pronoun in account.display_name.lower()):
             return True
-        for value in account.fields:
-            if(pronoun in value):
+        for field in account.fields:
+            if(pronoun in field.value.lower()):
                 return True
+        if(pronoun in account.note.lower()):
+            return True
     return False
 
 def get_gender(account):
-    if(is_gender(women_pronouns,account)):
-        return 1
     if(is_gender(nb_pronouns, account)):
         return 2
+    if(is_gender(women_pronouns,account)):
+        return 1
     return 0
