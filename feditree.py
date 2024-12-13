@@ -87,27 +87,30 @@ def create_image(accounts):
 
 bot_name = "feditree"
 localedir = './locales'
-api = get_api('masto.es', "test")
+api = get_api('masto.es', bot_name)
 notifications = get_new_notifications(api, bot_name, ["mention"])
 previous_ids = list_read(bot_name + "_previous_ids")
 
 for notification in notifications:
     i18n = gettext.translation(bot_name, localedir, fallback=True, languages=[notification.status.language])
     i18n.install()
-    if str(notification.account.id) in previous_ids:
-        status = "@" + notification.account.acct + " "
-        status += _("I have already generated a feditree for you this year. Try again next year!")
-        api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
-        continue
-    else:
-        list_append(bot_name + "_previous_ids", previous_ids)
-    accounts_ids = get_ordered_accounts_ids(notification.account.id)
-    accounts = get_accounts(accounts_ids)
-    image = create_image(accounts)
-    status = _("These are the people who have adorned the #FediTree of") + " @" + notification.account.acct + ":"
-    for account in accounts:
-        if account.acct == notification.account.acct: 
+    try:
+        if str(notification.account.id) in previous_ids:
+            status = "@" + notification.account.acct + " "
+            status += _("I have already generated a feditree for you this year. Try again next year!")
+            api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
             continue
-        status += " @/" + account.acct
-    api.status_post(status, media_ids=image, visibility="unlisted", in_reply_to_id=notification.status.id)
-    previous_ids.append(notification.account.id)
+        else:
+            list_append(bot_name + "_previous_ids", previous_ids)
+        accounts_ids = get_ordered_accounts_ids(notification.account.id)
+        accounts = get_accounts(accounts_ids)
+        image = create_image(accounts)
+        status = _("These are the people who have adorned the #FediTree of") + " @" + notification.account.acct + ":"
+        for account in accounts:
+            if account.acct == notification.account.acct: 
+                continue
+            status += " @/" + account.acct
+        api.status_post(status, media_ids=image, visibility="unlisted", in_reply_to_id=notification.status.id)
+        previous_ids.append(notification.account.id)
+    except:
+        api.status_post(_("An error ocurred. Please try again or contact my creator"), visibility="direct", in_reply_to_id=notification.status.id)
