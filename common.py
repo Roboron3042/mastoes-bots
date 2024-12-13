@@ -14,7 +14,7 @@ def get_api(url, token_name = ""):
     else:
         token = ""
 
-    return Mastodon(access_token = token, api_base_url = url, ratelimit_method='throw')
+    return Mastodon(access_token = token, api_base_url = url, ratelimit_method='throw', version_check_mode='none')
 
 def list_read(name):
     try:

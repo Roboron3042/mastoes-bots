@@ -5,6 +5,7 @@ articulos_indefinidos =["un", "una", "une"]
 articulos_definidos = ["el", "la", "le"]
 vocales_genero = ["o", "a", "e"]
 
+mensaje_api_incompatible = "No pude acceder a la información de la cuenta remota. Probablemente esté usando otro software distinto a Mastodon. No pude comprobar si tiene relación con ARTICULO_INDEFINIDO INSULTO como tú."
 mensaje_seguidores_vacio = "No pude consultar la lista de seguidos de la cuenta mencionada (tal vez está oculta o es demasiado grande). No pude comprobar si tiene relación con ARTICULO_INDEFINIDO INSULTO como tú."
 mensaje_no_amigo = "La cuenta mencionada no tiene una relación de seguimiento contigo. Es comprensible que no quiera tener nada que ver con ARTICULO_INDEFINIDO INSULTO como tú."
 mensaje_nobot = "La cuenta objetivo tiene la etiqueta #nobot en su biografía. ¡No tengo poder aquí, INSULTO!"
@@ -109,8 +110,12 @@ for n in notifications:
             dominio_insultado = "masto.es"
         else:
             dominio_insultado = insultado_mencion.acct.split("@")[1]
-        insultado_api = get_api(dominio_insultado)
-        insultado = insultado_api.account_lookup(insultado_mencion.acct)
+        try:
+            insultado_api = get_api(dominio_insultado)
+            insultado = insultado_api.account_lookup(insultado_mencion.acct)
+        except:
+            insultar_insultador(choosen_insulto, insultador, n.status, mensaje_api_incompatible)
+            break
         if("nobot" in insultado.note):
             insultar_insultador(choosen_insulto, insultador, n.status, mensaje_nobot)
             break
@@ -118,7 +123,11 @@ for n in notifications:
         elif(insultado.following_count > 6000 or insultado.following_count == 0):
             insultar_insultador(choosen_insulto, insultador, n.status, mensaje_seguidores_vacio)
             break
-        follows = insultado_api.account_following(insultado.id, limit=80)
+        try:
+            follows = insultado_api.account_following(insultado.id, limit=80)
+        except:
+            insultar_insultador(choosen_insulto, insultador, n.status, mensaje_api_incompatible)
+            break
         if(len(follows) == 0):
             insultar_insultador(choosen_insulto, insultador, n.status, mensaje_seguidores_vacio)
             break
