@@ -48,7 +48,7 @@ def get_accounts(accounts_ids, _api):
     accounts = []
     for i in range(len(accounts_ids)):
         account = _api.account(accounts_ids[i])
-        if "nobot" not in account.note: 
+        if "nobot" not in account.note.lower() and account not in accounts: 
             accounts.append(account)
         if len(accounts) == len(coordinates): 
             break
@@ -101,12 +101,14 @@ for notification in notifications:
         i18n = gettext.translation(bot_name, localedir, fallback=True, languages=[lang])
         i18n.install()
         if str(notification.account.id) in previous_ids:
+            print("Skipping generation, a tree was already generated for: " + notification.account.acct)
             status = "@" + notification.account.acct + " "
             status += _("I have already generated a feditree for you this year. Try again next year!")
             # Currently disabled due to API limits
             #api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
             continue
         try:
+            print("Generating a tree for: " + notification.account.acct)
             external_domain = notification.account.acct.split("@")[1]
             external_api = get_api(external_domain)
             external_account = external_api.account_lookup(notification.account.acct)
@@ -114,7 +116,7 @@ for notification in notifications:
             accounts = get_accounts(accounts_ids, external_api)
         except:
             print(traceback.format_exc())
-            print("external api failed, using internal api")
+            print("External api failed, using internal api instead.")
             accounts_ids = get_ordered_accounts_ids(notification.account.id, api)
             accounts = get_accounts(accounts_ids, api)
         image = create_image(accounts)
