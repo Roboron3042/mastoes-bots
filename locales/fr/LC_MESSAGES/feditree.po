@@ -6,70 +6,93 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-15 21:02+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2024-12-15 21:28+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: feditree.py:93
 msgid ""
 "A simple drawing of a fir tree, crowned with the pentagon symbolizing the "
 "Fediverse."
 msgstr ""
+"Un dessin simple d'un sapin, couronné du pentagone symbolisant le Fediverse."
 
 #: feditree.py:94
 msgid ""
 "There are some christmas bulbs hanging in the tree, which have the avatars "
 "of the following accounts inside:"
 msgstr ""
+"Il y a quelques bulbes de Noël suspendus dans l'arbre, qui contiennent les "
+"avatars des comptes suivants à l'intérieur :"
 
 #: feditree.py:96
 msgid ""
 "The accounts appear in the tree in the same order, from top to bottom and "
 "from left to right."
 msgstr ""
+"Les comptes apparaissent dans l'arbre dans le même ordre, de haut en bas et "
+"de gauche à droite."
 
 #: feditree.py:97
 msgid "The order symbolizes the number of interactions, from most to least."
 msgstr ""
+"L'ordre symbolise le nombre d'interactions, du plus grand au plus petit."
 
 #: feditree.py:98
 msgid ""
 "The Fediverse logo was created by @eudaimon@fe.disroot.org and the tree "
 "design was obtained from https://freesvgdesigns.com"
 msgstr ""
+"Le logo Fediverse a été créé par @eudaimon@fe.disroot.org et le design de "
+"l'arbre a été obtenu à partir de https://freesvgdesigns.com"
 
 #: feditree.py:127
 msgid ""
 "I have already generated a feditree for you this year. Try again next year!"
 msgstr ""
+"J'ai déjà généré un feditree pour vous cette année. Réessayez l'année "
+"prochaine !"
 
 #: feditree.py:143
 msgid "Using external server was not possible; result may be inaccurate."
 msgstr ""
+"L'utilisation d'un serveur externe n'a pas été possible ; le résultat peut "
+"être inexact."
 
 #: feditree.py:148
 msgid ""
 "I couldn't generate a #FediTree for you because you have #nobot in your "
 "profile."
 msgstr ""
+"Je n'ai pas pu générer un #FediTree pour vous car vous n'avez #nobot dans "
+"votre profil."
 
 #: feditree.py:153
 msgid "Here is your #FediTree for the year"
-msgstr ""
+msgstr "Voici votre #FediTree pour l'année"
 
 #: feditree.py:155
 msgid "accounts were omitted due to #nobot tags or discoverability settings."
 msgstr ""
+"comptes ont été omis en raison de balises #nobot ou de paramètres de "
+"détectabilité."
 
 #: feditree.py:164
 msgid ""
 "An error ocurred. I have probably reached my posting limit. Please try again "
 "in an hour or contact my creator if I keep failing."
 msgstr ""
+"Une erreur s'est produite. J'ai probablement atteint ma limite de "
+"publication. Veuillez réessayer dans une heure ou contacter mon créateur si "
+"j'échoue à nouveau."
+
+#~ msgid "These are the people who have adorned the #FediTree of"
+#~ msgstr "Estas son las personas que han adornado el #FediÁrbol de"

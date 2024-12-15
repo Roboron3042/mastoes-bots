@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-13 21:17+0100\n"
-"PO-Revision-Date: 2024-12-13 22:06+0100\n"
+"POT-Creation-Date: 2024-12-15 21:02+0100\n"
+"PO-Revision-Date: 2024-12-15 21:19+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.4.2\n"
 
-#: feditree.py:80
+#: feditree.py:93
 msgid ""
 "A simple drawing of a fir tree, crowned with the pentagon symbolizing the "
 "Fediverse."
@@ -26,27 +26,27 @@ msgstr ""
 "Un dibuix senzill d'un avet, coronat amb el pentàgon que simbolitza el "
 "Fediverse."
 
-#: feditree.py:81
+#: feditree.py:94
 msgid ""
 "There are some christmas bulbs hanging in the tree, which have the avatars "
-"of the mentioned accounts inside."
+"of the following accounts inside:"
 msgstr ""
-"Hi ha penjades a l'arbre unes bombetes de Nadal, que tenen a dins els "
-"avatars dels esmentats comptes."
+"Hi ha unes bombetes de Nadal penjades a l'arbre, que tenen a dins els "
+"avatars dels comptes següents:"
 
-#: feditree.py:82
+#: feditree.py:96
 msgid ""
-"The accounts appear in the tree in the same order as the mentions, from top "
-"to bottom and from left to right."
+"The accounts appear in the tree in the same order, from top to bottom and "
+"from left to right."
 msgstr ""
-"Els comptes apareixen a l'arbre en el mateix ordre que les mencions, de dalt "
-"a baix i d'esquerra a dreta."
+"Els comptes apareixen a l'arbre en el mateix ordre, de dalt a baix i "
+"d'esquerra a dreta."
 
-#: feditree.py:83
+#: feditree.py:97
 msgid "The order symbolizes the number of interactions, from most to least."
 msgstr "L'ordre simbolitza el nombre d'interaccions, de més a menys."
 
-#: feditree.py:84
+#: feditree.py:98
 msgid ""
 "The Fediverse logo was created by @eudaimon@fe.disroot.org and the tree "
 "design was obtained from https://freesvgdesigns.com"
@@ -54,13 +54,42 @@ msgstr ""
 "El logotip de Fediverse va ser creat per @eudaimon@fe.disroot.org i el "
 "disseny de l'arbre es va obtenir a https://freesvgdesigns.com"
 
-#: feditree.py:98
+#: feditree.py:127
 msgid ""
 "I have already generated a feditree for you this year. Try again next year!"
 msgstr ""
 "Ja he generat un feditree per a tu aquest any. Torna-ho a provar l'any que "
 "ve!"
 
-#: feditree.py:103
-msgid "These are the people who have adorned the #FediTree of"
-msgstr "Aquestes són les persones que han adornat el #FediArbre de"
+#: feditree.py:143
+msgid "Using external server was not possible; result may be inaccurate."
+msgstr ""
+"No era possible utilitzar un servidor extern; el resultat pot ser inexacte."
+
+#: feditree.py:148
+msgid ""
+"I couldn't generate a #FediTree for you because you have #nobot in your "
+"profile."
+msgstr "No he pogut generar un #FediArbre perquè tens #nobot al teu perfil."
+
+#: feditree.py:153
+msgid "Here is your #FediTree for the year"
+msgstr "Aquí teniu el vostre #FediArbre per a l'any"
+
+#: feditree.py:155
+msgid "accounts were omitted due to #nobot tags or discoverability settings."
+msgstr ""
+"5 comptes s'han omès a causa de les etiquetes #nobot o de la configuració de "
+"descoberta."
+
+#: feditree.py:164
+msgid ""
+"An error ocurred. I have probably reached my posting limit. Please try again "
+"in an hour or contact my creator if I keep failing."
+msgstr ""
+"S'ha produït un error. Probablement he arribat al meu límit de publicació. "
+"Si us plau, torna-ho a provar d'aquí a una hora o contacta amb el meu "
+"creador si continuo fallant."
+
+#~ msgid "These are the people who have adorned the #FediTree of"
+#~ msgstr "Aquestes són les persones que han adornat el #FediArbre de"

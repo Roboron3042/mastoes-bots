@@ -5,6 +5,8 @@ import gettext
 import requests
 import traceback
 
+current_year = datetime.date.today().year
+
 coordinates = [
     (350,200),
     (275,350),
@@ -19,7 +21,6 @@ coordinates = [
 ]
 
 def get_ordered_accounts_ids(account_id, _api):
-    current_year = datetime.date.today().year
     accounts = {}
     stop = False
     max_id=None
@@ -46,11 +47,19 @@ def get_ordered_accounts_ids(account_id, _api):
 
 def get_accounts(accounts_ids, _api):
     accounts = []
+    omitted_accounts = 0
     for i in range(len(accounts_ids)):
         account = _api.account(accounts_ids[i])
-        if "nobot" not in account.note.lower() and account not in accounts: 
+        # Original poster does not allow bots interaction - skip it all
+        if i == 0:
+            if "nobot" in account.note.lower(): return []
+            else: accounts.append(account)
+        if "nobot" not in account.note.lower() and 'discoverable' in account and account['discoverable'] and account not in accounts: 
             accounts.append(account)
+        else:
+            omitted_accounts += 1
         if len(accounts) == len(coordinates): 
+            accounts.append(omitted_accounts)
             break
     return accounts
 
@@ -62,8 +71,12 @@ def create_image(accounts):
         bola_radio.load()
     with Image.open("feditree/bola_mask.png") as bola_mask:
         bola_mask.load()
+    description_accounts = ""
     for i in range(min(len(accounts),len(coordinates))):
         account = accounts[i]
+        description_accounts += " \n- " + account.acct
+        if len(account.acct.split("@")) == 1:
+            description_accounts += "@" + status_domain
         avatar_url = account.avatar_static
         avatar_data = requests.get(avatar_url).content
         with open('feditree/avatar.png', 'wb') as handler:
@@ -79,12 +92,20 @@ def create_image(accounts):
     avatar.close()
     feditree.close()
     description = _("A simple drawing of a fir tree, crowned with the pentagon symbolizing the Fediverse.")
-    description = description + " " + _("There are some christmas bulbs hanging in the tree, which have the avatars of the mentioned accounts inside.")
-    description = description + " " + _("The accounts appear in the tree in the same order as the mentions, from top to bottom and from left to right.")
-    description = description + " " + _("The order symbolizes the number of interactions, from most to least.")
-    description = description + "\n\n" + _("The Fediverse logo was created by @eudaimon@fe.disroot.org and the tree design was obtained from https://freesvgdesigns.com")
+    description += "\n\n" + _("There are some christmas bulbs hanging in the tree, which have the avatars of the following accounts inside:")
+    description += description_accounts
+    description += "\n\n" + _("The accounts appear in the tree in the same order, from top to bottom and from left to right.")
+    description += " " + _("The order symbolizes the number of interactions, from most to least.")
+    description += "\n\n" + _("The Fediverse logo was created by @eudaimon@fe.disroot.org and the tree design was obtained from https://freesvgdesigns.com")
     return api.media_post("feditree/feditree.png", description=description)
 
+def check_removal(notification, api):
+    for tag in notification.status.tags:
+        if tag.name == "delete":
+            status_to_delete = api.status(notification.status.in_reply_to_id)
+            if notification.account.username in status_to_delete.content:
+                api.status_delete(status_to_delete.id)
+                return True
 
 bot_name = "feditree"
 localedir = './locales'
@@ -98,6 +119,7 @@ for notification in notifications:
     if lang is None:
         lang = "en"
     try:
+        if check_removal(notification, api): continue
         i18n = gettext.translation(bot_name, localedir, fallback=True, languages=[lang])
         i18n.install()
         if str(notification.account.id) in previous_ids and not "🎄" in notification.status.content:
@@ -107,6 +129,7 @@ for notification in notifications:
             # Currently disabled due to API limits
             #api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
             continue
+        extra_info = ""
         try:
             print("Generating a tree for: " + notification.account.acct)
             external_domain = notification.account.acct.split("@")[1]
@@ -118,17 +141,22 @@ for notification in notifications:
         except:
             print(traceback.format_exc())
             print("External api failed, using internal api instead.")
-            status_domain = domain
+            if(status_domain != domain):
+                extra_info += _("Using external server was not possible; result may be inaccurate.")
+                status_domain = domain
             accounts_ids = get_ordered_accounts_ids(notification.account.id, api)
             accounts = get_accounts(accounts_ids, api)
+        if len(accounts) == 0:
+            status = "@" + notification.account.acct + " " + _("I couldn't generate a #FediTree for you because you have #nobot in your profile.")
+            api.status_post(status, visibility="unlisted", in_reply_to_id=notification.status.id, language=lang)
+            continue
+        omitted_accounts = accounts.pop()
         image = create_image(accounts)
-        status = _("These are the people who have adorned the #FediTree of") + " @" + notification.account.acct + ":"
-        for account in accounts:
-            if account.username == notification.account.username: 
-                continue
-            status += " \n- " + account.acct
-            if len(account.acct.split("@")) == 1:
-                status += "@" + status_domain
+        status = "@" + notification.account.acct + " " + _("Here is your #FediTree for the year") + " " + str(current_year) + "."
+        if omitted_accounts > 0:
+            extra_info += str(omitted_accounts) + " " + _("accounts were omitted due to #nobot tags or discoverability settings.")
+        if len(extra_info):
+            status += "\n\n" + extra_info
         api.status_post(status, media_ids=image, visibility="unlisted", in_reply_to_id=notification.status.id, language=lang)
         previous_ids.append(notification.account.id)
         list_append(bot_name + "_previous_ids", str(notification.account.id))
