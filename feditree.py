@@ -100,7 +100,7 @@ for notification in notifications:
     try:
         i18n = gettext.translation(bot_name, localedir, fallback=True, languages=[lang])
         i18n.install()
-        if str(notification.account.id) in previous_ids:
+        if str(notification.account.id) in previous_ids and not "🎄" in notification.status.content:
             print("Skipping generation, a tree was already generated for: " + notification.account.acct)
             status = "@" + notification.account.acct + " "
             status += _("I have already generated a feditree for you this year. Try again next year!")
@@ -110,6 +110,7 @@ for notification in notifications:
         try:
             print("Generating a tree for: " + notification.account.acct)
             external_domain = notification.account.acct.split("@")[1]
+            status_domain = external_domain
             external_api = get_api(external_domain)
             external_account = external_api.account_lookup(notification.account.acct)
             accounts_ids = get_ordered_accounts_ids(external_account.id, external_api)
@@ -117,6 +118,7 @@ for notification in notifications:
         except:
             print(traceback.format_exc())
             print("External api failed, using internal api instead.")
+            status_domain = domain
             accounts_ids = get_ordered_accounts_ids(notification.account.id, api)
             accounts = get_accounts(accounts_ids, api)
         image = create_image(accounts)
@@ -126,13 +128,13 @@ for notification in notifications:
                 continue
             status += " \n- " + account.acct
             if len(account.acct.split("@")) == 1:
-                status += "@" + domain
+                status += "@" + status_domain
         api.status_post(status, media_ids=image, visibility="unlisted", in_reply_to_id=notification.status.id, language=lang)
         previous_ids.append(notification.account.id)
         list_append(bot_name + "_previous_ids", str(notification.account.id))
     except:
         print(traceback.format_exc())
-        status = "@" + notification.acct + " "
+        status = "@" + notification.account.acct + " "
         status += _("An error ocurred. I have probably reached my posting limit. Please try again in an hour or contact my creator if I keep failing.")
         try:
             api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id, language=lang)
