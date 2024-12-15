@@ -18,14 +18,14 @@ coordinates = [
     (575,650),
 ]
 
-def get_ordered_accounts_ids(account_id):
+def get_ordered_accounts_ids(account_id, _api):
     current_year = datetime.date.today().year
     accounts = {}
     stop = False
     max_id=None
     loops = 0
     while stop == False:
-        statuses = api.account_statuses(account_id, exclude_reblogs=True, max_id=max_id, limit=80)
+        statuses = _api.account_statuses(account_id, exclude_reblogs=True, max_id=max_id, limit=80)
         for status in statuses:
             if(status.created_at.year < current_year):
                 stop = True
@@ -44,10 +44,10 @@ def get_ordered_accounts_ids(account_id):
     accounts_list.pop
     return accounts_list
 
-def get_accounts(accounts_ids):
+def get_accounts(accounts_ids, _api):
     accounts = []
     for i in range(len(accounts_ids)):
-        account = api.account(accounts_ids[i])
+        account = _api.account(accounts_ids[i])
         if "nobot" not in account.note: 
             accounts.append(account)
         if len(accounts) == len(coordinates): 
@@ -63,7 +63,7 @@ def create_image(accounts):
     with Image.open("feditree/bola_mask.png") as bola_mask:
         bola_mask.load()
     for i in range(min(len(accounts),len(coordinates))):
-        account = api.account(accounts[i])
+        account = accounts[i]
         avatar_url = account.avatar_static
         avatar_data = requests.get(avatar_url).content
         with open('feditree/avatar.png', 'wb') as handler:
@@ -88,7 +88,8 @@ def create_image(accounts):
 
 bot_name = "feditree"
 localedir = './locales'
-api = get_api('masto.es', bot_name)
+domain = "masto.es"
+api = get_api(domain, bot_name)
 notifications = get_new_notifications(api, bot_name, ["mention"])
 previous_ids = list_read(bot_name + "_previous_ids")
 
@@ -105,20 +106,31 @@ for notification in notifications:
             # Currently disabled due to API limits
             #api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
             continue
-        accounts_ids = get_ordered_accounts_ids(notification.account.id)
-        accounts = get_accounts(accounts_ids)
+        try:
+            external_domain = notification.account.acct.split("@")[1]
+            external_api = get_api(external_domain)
+            external_account = external_api.account_lookup(notification.account.acct)
+            accounts_ids = get_ordered_accounts_ids(external_account.id, external_api)
+            accounts = get_accounts(accounts_ids, external_api)
+        except:
+            print(traceback.format_exc())
+            print("external api failed, using internal api")
+            accounts_ids = get_ordered_accounts_ids(notification.account.id, api)
+            accounts = get_accounts(accounts_ids, api)
         image = create_image(accounts)
         status = _("These are the people who have adorned the #FediTree of") + " @" + notification.account.acct + ":"
         for account in accounts:
-            if account.acct == notification.account.acct: 
+            if account.username == notification.account.username: 
                 continue
             status += " \n- " + account.acct
+            if len(account.acct.split("@")) == 1:
+                status += "@" + domain
         api.status_post(status, media_ids=image, visibility="unlisted", in_reply_to_id=notification.status.id, language=lang)
         previous_ids.append(notification.account.id)
         list_append(bot_name + "_previous_ids", str(notification.account.id))
     except:
         print(traceback.format_exc())
-        status = "@" + notification.account.acct + " "
+        status = "@" + notification.acct + " "
         status += _("An error ocurred. I have probably reached my posting limit. Please try again in an hour or contact my creator if I keep failing.")
         try:
             api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id, language=lang)
