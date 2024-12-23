@@ -41,22 +41,19 @@ def list_append(name, value):
 
 # It is not safe to get notifications from "last_id" because some may have been deleted
 def get_new_notifications(api, bot_name, types=None):
-    last_notifications=list_read(bot_name + '_last_notifications')
+    last_notifications = list_read(bot_name + '_last_notifications')
     notifications = api.notifications(types=types)
     new_notifications = []
     new_notifications_ids = []
-    max_notification = 0
-    if len(notifications) < 2:
-        max_notification = len(notifications)
-    else:
-        max_notification = len(notifications) // 2
-
-    for i in range(0, max_notification):
-        if str(notifications[i]['id']) not in last_notifications:
-            new_notifications.append(notifications[i])
 
     for n in notifications:
-        new_notifications_ids.append(n['id'])
+        if str(n['id']) not in last_notifications:
+            new_notifications.append(n)
+        new_notifications_ids.append(str(n['id']))
+
+    for old_notification in last_notifications:
+        if len(new_notifications_ids) < 100 and old_notification not in new_notifications_ids:
+            new_notifications_ids.append(old_notification)
 
     list_write(bot_name + "_last_notifications", new_notifications_ids)
     return new_notifications
