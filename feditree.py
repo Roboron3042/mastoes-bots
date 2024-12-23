@@ -59,8 +59,8 @@ def get_accounts(accounts_ids, _api):
         else:
             omitted_accounts += 1
         if len(accounts) == len(coordinates): 
-            accounts.append(omitted_accounts)
             break
+    accounts.append(omitted_accounts)
     return accounts
 
 
@@ -74,7 +74,7 @@ def create_image(accounts):
     description_accounts = ""
     for i in range(min(len(accounts),len(coordinates))):
         account = accounts[i]
-        description_accounts += " \n- " + account.acct
+        description_accounts += "\n@" + account.acct
         if len(account.acct.split("@")) == 1:
             description_accounts += "@" + status_domain
         avatar_url = account.avatar_static
@@ -92,8 +92,8 @@ def create_image(accounts):
     avatar.close()
     feditree.close()
     description = _("A simple drawing of a fir tree, crowned with the pentagon symbolizing the Fediverse.")
-    description += "\n\n" + _("There are some christmas bulbs hanging in the tree, which have the avatars of the following accounts inside:")
-    description += description_accounts
+    description += _("There are some christmas bulbs hanging in the tree, which have the avatars of the following accounts inside:")
+    description += "\n" + description_accounts
     description += "\n\n" + _("The accounts appear in the tree in the same order, from top to bottom and from left to right.")
     description += " " + _("The order symbolizes the number of interactions, from most to least.")
     description += "\n\n" + _("The Fediverse logo was created by @eudaimon@fe.disroot.org and the tree design was obtained from https://freesvgdesigns.com")
@@ -102,10 +102,14 @@ def create_image(accounts):
 def check_removal(notification, api):
     for tag in notification.status.tags:
         if tag.name == "delete":
-            status_to_delete = api.status(notification.status.in_reply_to_id)
-            if notification.account.username in status_to_delete.content:
-                api.status_delete(status_to_delete.id)
-                return True
+            try:
+                status_to_delete = api.status(notification.status.in_reply_to_id)
+                if notification.account.username in status_to_delete.content:
+                    api.status_delete(status_to_delete.id)
+                    return True
+            except:
+                status = _("I could not find the post to delete. Please reply to the post you want deleted.")
+                api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
 
 bot_name = "feditree"
 localedir = './locales'
@@ -118,10 +122,10 @@ for notification in notifications:
     lang = notification.status.language
     if lang is None:
         lang = "en"
+    i18n = gettext.translation(bot_name, localedir, fallback=True, languages=[lang])
+    i18n.install()
     try:
         if check_removal(notification, api): continue
-        i18n = gettext.translation(bot_name, localedir, fallback=True, languages=[lang])
-        i18n.install()
         if str(notification.account.id) in previous_ids and not "🎄" in notification.status.content:
             print("Skipping generation, a tree was already generated for: " + notification.account.acct)
             status = "@" + notification.account.acct + " "
@@ -130,6 +134,7 @@ for notification in notifications:
             #api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id)
             continue
         extra_info = ""
+        status_domain = domain
         try:
             print("Generating a tree for: " + notification.account.acct)
             external_domain = notification.account.acct.split("@")[1]
@@ -142,13 +147,13 @@ for notification in notifications:
             print(traceback.format_exc())
             print("External api failed, using internal api instead.")
             if(status_domain != domain):
-                extra_info += _("Using external server was not possible; result may be inaccurate.")
+                extra_info += _("Using external server was not possible; result may be inaccurate.") + "\n"
                 status_domain = domain
             accounts_ids = get_ordered_accounts_ids(notification.account.id, api)
             accounts = get_accounts(accounts_ids, api)
         if len(accounts) == 0:
             status = "@" + notification.account.acct + " " + _("I couldn't generate a #FediTree for you because you have #nobot in your profile.")
-            api.status_post(status, visibility="unlisted", in_reply_to_id=notification.status.id, language=lang)
+            api.status_post(status, visibility="direct", in_reply_to_id=notification.status.id, language=lang)
             continue
         omitted_accounts = accounts.pop()
         image = create_image(accounts)
