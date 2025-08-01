@@ -37,7 +37,7 @@ for year in years:
     if len(texts[year]):
         message = day + " de " + month + " de " + choice(texts[year]) + " #Efemérides"
         if last_id:
-            status = api.status_post(message, in_reply_to_id=last_id)
+            status = api.status_post(message, in_reply_to_id=last_id, visibility="unlisted")
             last_id = status['id']
         else:
             status = api.status_post(message)

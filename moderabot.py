@@ -6,6 +6,10 @@ bot_name = 'moderabot'
 api = get_api('masto.es', bot_name)
 notifications = api.notifications(types=["admin.sign_up"])
 
+pending_accounts = api.admin_accounts_v2(status="pending")
+for account in pending_accounts:
+    api.admin_account_approve(account)
+
 # Vietnamese accounts
 forbidden_words = list_read('moderabot_forbidden_words')
 for n in notifications:

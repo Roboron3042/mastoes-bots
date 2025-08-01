@@ -54,7 +54,7 @@ def insultar_insultador(insulto, insultador, status, mensaje):
     gender = get_gender(insultador)
     insulto = get_insulto_inclusivo(insulto, gender)
     mensaje = mensaje.replace("INSULTO", insulto).replace("ARTICULO_INDEFINIDO", articulos_indefinidos[gender])
-    api.status_post("@" + insultador.acct + " " + mensaje.replace("INSULTO", insulto), in_reply_to_id=status.id, visibility="unlisted" )
+    api.status_post("@" + insultador.acct + " " + mensaje.replace("INSULTO", insulto), in_reply_to_id=status.id)
 
 def insultar_insultado(insulto, insultador, insultado, insultado_acct, status):
     gender = get_gender(insultado)
@@ -70,8 +70,8 @@ def insultar_insultado(insulto, insultador, insultado, insultado_acct, status):
     mensaje = mensaje.replace("INSULTO", insulto)
     mensaje = mensaje.replace("ARTICULO_INDEFINIDO", articulos_indefinidos[gender])
     mensaje = mensaje.replace("ARTICULO_DEFINIDO", articulos_definidos[gender])
-    reply = api.status_post(mensaje, in_reply_to_id=status.id, visibility="unlisted" )
-    api.status_reblog(reply.id)
+    reply = api.status_post(mensaje, in_reply_to_id=status.id)
+    #api.status_reblog(reply.id)
 
 bot_name = 'insultabot'
 api = get_api('masto.es', bot_name)
@@ -90,7 +90,7 @@ for n in notifications:
         insultado_mencion = {}
         if(len(menciones) < 2):
             insulto = get_insulto_inclusivo(choosen_insulto, get_gender(insultador))
-            api.status_post("@" + insultador.acct + " " + mensaje_insuficientes.replace("INSULTO", insulto), in_reply_to_id=n.status.id, visibility="unlisted" )
+            api.status_post("@" + insultador.acct + " " + mensaje_insuficientes.replace("INSULTO", insulto), in_reply_to_id=n.status.id)
             break
         for mencion in menciones:
             if(mencion.url == "https://masto.es/@rober"):

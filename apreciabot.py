@@ -10,6 +10,7 @@ import traceback
 
 # Messages
 mensaje = "Alguien que te aprecia mucho quiere recordarte que eres una persona maravillosa :ablobcatheartsqueeze: ¡Sigue así, "
+mensaje_orgullo = "Alguien que te aprecia quiere que sepas que eres motivo de orgullo 🥹"
 mensaje_croqueta = "Alguien que te aprecia mucho quiere enviarte croquetas :croqueta: :croqueta: :croqueta:"
 mensaje_cumple = ["Alguien me ha revelado que hoy es tu día, ", ". ¡Feliz cumpleaños de su parte! :blobcatbirthday:"]
 mensaje_mismo = "La persona más importante que debes apreciar eres tú. ¡Eres increíble! ❤"
@@ -69,6 +70,8 @@ for n in notifications:
                         new_status = api.status_post(target + " " + mensaje_croqueta, visibility="unlisted")
                     elif check_mode(mode_cumple_words, content):
                         new_status = api.status_post(mensaje_cumple[0] + target + mensaje_cumple[1], visibility="unlisted")
+                    elif check_mode(["orgullo"], content):
+                        new_status = api.status_post(target + " " + mensaje_orgullo, visibility="unlisted")
                     else: 
                         new_status = api.status_post(mensaje + target + "!", visibility="unlisted")
                     api.status_reply(n['status'], 'Tu muestra de aprecio ha sido enviada ❤️ ' + new_status['url'], visibility="direct")

@@ -10,39 +10,38 @@ def get_message(user_domain):
 excluded_domains = [
     'masto.es',
     # Relay tkz.one
-    'mst.universoalterno.es',
-    'masto.friki.lol',
-    'mastodon.com.py',
-    'comunidad.nvda.es',
     'mast.lat',
-    'viajes.social',
     'ferrocarril.net',
     'tkz.one',
-    'mastorol.es',
     'shrimply.social',
     'mstdn.jmiguel.eu',
-    'mastorock.com',
     'frikiverse.zone',
     '41020.social',
-    'tuiter.rocks',
-    'mastorock.com',
-    'meetiko.org',
     'mastodon.cr',
     'fedi.lat',
+    'frankenwolke.com',
+    'neopaquita.es',
     # Relay nobigtech.es
     'sindicato.social',
     'mastodon.uy',
-    'red.niboe.info',
     'nobigtech.es',
     'loa.masto.host',
     'bizkaia.social',
     'mstdn.mx',
     'federa.social',
+    # Relay uni-direccional Fedibuzz
+    'comunidad.nvda.es',
+    'mastorol.es',
+    'tuiter.rocks',
+    'meetiko.org',
+    'mst.universoalterno.es',
     # Non-spanish accounts >:(
     'sportsbots.xyz',
     'press.coop',
     'fedibird.com',
+    'flipboard.com',
     # Mirrors
+    'es.fedimeteo.com',
     'respublicae.eu',
     'bots.fedi.cr '
 ]
@@ -117,12 +116,16 @@ def check_timeline(domain, timeline_name = 'public', api_external=None):
             if date_created > date_recent and timeline_name == 'local' and user_domain == 'mastodon.social':
                 try_dm(username, user_domain)
             print("Following: " + username)
-            user = api_mastoes.search_v2("@" + username + " ", result_type="accounts")["accounts"][0]
-            # Retrieve the post, it could be the first
-            api_mastoes.search_v2(post['url'], result_type="posts")
-            following.append(username)
-            list_append(bot_name, username)
-            try_follow(user['id'])
+            accounts = api_mastoes.search_v2("@" + username + " ", result_type="accounts")["accounts"]
+            if len(accounts):
+                user = accounts[0]
+                # Retrieve the post, it could be the first
+                api_mastoes.search_v2(post['url'], result_type="posts")
+                following.append(username)
+                list_append(bot_name, username)
+                try_follow(user['id'])
+            else:
+                print("User " + username + " not found in search")
 
     if len(timeline) > 0:
         list_write(bot_name + "_last_id_" + domain, [timeline[0]['id']])
