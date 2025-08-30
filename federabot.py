@@ -120,7 +120,7 @@ def check_timeline(domain, timeline_name = 'public', api_external=None):
             if len(accounts):
                 user = accounts[0]
                 # Retrieve the post, it could be the first
-                api_mastoes.search_v2(post['url'], result_type="posts")
+                api_mastoes.search_v2(post['url'], result_type="statuses")
                 following.append(username)
                 list_append(bot_name, username)
                 try_follow(user['id'])

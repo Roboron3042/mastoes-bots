@@ -28,7 +28,8 @@ for post in timeline:
 		print("@" + username)
 		try:
 			# Puede que el usuario no permita buscar sus publicaciones
-			api_mastoes.search_v2(post['url'], result_type="posts")
+			search = api_mastoes.search_v2(post['url'], result_type="statuses")
+			local_post = search['statuses'][0]
 			api_mastoes.status_post("@" + username + " " + message, visibility="private", in_reply_to_id=local_post)
 		except:
 			api_mastoes.status_post("@" + username + " " + message, visibility="direct")
