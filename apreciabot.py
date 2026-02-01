@@ -62,7 +62,7 @@ for n in notifications:
                 print(traceback.format_exc())
                 api.status_post(user + mensaje_no_encontrado, in_reply_to_id=n['status']['id'], visibility="direct" )
             else:
-                if "nobot" in bio['note']:
+                if "nobot" in bio['note'].lower():
                     api.status_reply(n['status'], mensaje_nobot)
                 else:
                     #api.status_post(mensaje + target + "!", in_reply_to_id=n['status']['id'], visibility="unlisted")

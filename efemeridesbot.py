@@ -13,9 +13,10 @@ today = datetime.today()
 day = today.strftime('%d')
 month = today.strftime('%B')
 
-r = requests.get('https://es.m.wikipedia.org/wiki/' + day + '_de_' + month)
+headers = {'User-Agent': 'efemeridesbot/0.1 (https://masto.es/@efemeridesbot)'}
+r = requests.get('https://es.m.wikipedia.org/wiki/' + day + '_de_' + month, headers=headers)
 html = BeautifulSoup(r.text, "html.parser")
-events = html.find_all('section')[1].find_all('li')
+events = html.find('div', { 'id': 'bodyContent' }).find_all('ul')[0].find_all('li')
 
 years = [1000,1500,1800,1850,1900,1935,1947,1960,1970,1980,1990,2000,2010,2050]
 texts = {i: [] for i in years }
