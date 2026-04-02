@@ -9,14 +9,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-15 21:02+0100\n"
-"PO-Revision-Date: 2024-12-15 21:25+0100\n"
+"PO-Revision-Date: 2026-04-02 19:41+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.8\n"
 
 #: feditree.py:93
 msgid ""
@@ -54,7 +54,7 @@ msgid ""
 "design was obtained from https://freesvgdesigns.com"
 msgstr ""
 "Das Fediverse-Logo wurde von @eudaimon@fe.disroot.org erstellt und das "
-"Baumdesign stammt von https://freesvgdesigns.com."
+"Baumdesign stammt von https://freesvgdesigns.com"
 
 #: feditree.py:127
 msgid ""
@@ -84,7 +84,7 @@ msgstr "Hier ist Ihr #FediTree für dieses Jahr"
 #: feditree.py:155
 msgid "accounts were omitted due to #nobot tags or discoverability settings."
 msgstr ""
-"konten wurden aufgrund von #nobot-Tags oder Auffindbarkeitseinstellungen "
+"Konten wurden aufgrund von #nobot-Tags oder Auffindbarkeitseinstellungen "
 "ausgelassen."
 
 #: feditree.py:164
