@@ -83,7 +83,7 @@ def create_image(accounts):
             handler.write(avatar_data)
         with Image.open('feditree/avatar.png') as avatar:
             avatar.load()
-        avatar = avatar.resize((100,100)).convert("RGB")
+        avatar = avatar.resize((100,100)).convert("RGBA")
         avatar.paste(bola_radio, (0,0), bola_radio)
         feditree.paste(avatar, coordinates[i], bola_mask)
     feditree.save("feditree/feditree.png")
