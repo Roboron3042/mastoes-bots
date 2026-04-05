@@ -32,49 +32,53 @@ def check_mode(mode_words, content):
             return True
     return False
 
-notifications = get_new_notifications(api, bot_name, ["mention"])
+notifications = get_new_notifications(api, bot_name, ["mention", "favourite"])
 
 # Some notifications may have been deleted since last fetch
 # Therefore, it is better to check less than the maximum number of notifications
 for n in notifications:
-    # Mentions data are HTML paragraphs so we delete everything between <> to clean it up
-    rawContent = n['status']['content'].replace("</br >", " ").replace("<br>", " ")
-    text = BeautifulSoup(rawContent, "html.parser").get_text()
-    text = re.sub(" +", " ", text)
-    content = re.sub(no_unicode_spaces_pattern, "", text).split(" ")
-    try:
-        first_mention = content[0]
-        target = "@" + content[1]
-        user = "@" + n['account']['acct']
-    except:
-        api.status_reply(n['status'], mensaje_error)
-        continue
-    # The bot is meant to be anonymous so only allow directs
-    if n['status']['visibility'] == "direct":
-        if user == target:
-            api.status_reply(n['status'], mensaje_mismo, visibility="unlisted")
-        else:
-            # Find account if it is not known by the server
-            try:
-                api.search_v2(target, result_type="accounts")
-                bio = api.account_lookup(target)
-            except:
-                print(traceback.format_exc())
-                api.status_post(user + mensaje_no_encontrado, in_reply_to_id=n['status']['id'], visibility="direct" )
+    if n.type == "favourite":
+        if n.status.visibility == "direct":
+            api.status_delete(n.status)
+    else:
+        # Mentions data are HTML paragraphs so we delete everything between <> to clean it up
+        rawContent = n['status']['content'].replace("</br >", " ").replace("<br>", " ")
+        text = BeautifulSoup(rawContent, "html.parser").get_text()
+        text = re.sub(" +", " ", text)
+        content = re.sub(no_unicode_spaces_pattern, "", text).split(" ")
+        try:
+            first_mention = content[0]
+            target = "@" + content[1]
+            user = "@" + n['account']['acct']
+        except:
+            api.status_reply(n['status'], mensaje_error)
+            continue
+        # The bot is meant to be anonymous so only allow directs
+        if n['status']['visibility'] == "direct":
+            if user == target:
+                api.status_reply(n['status'], mensaje_mismo, visibility="unlisted")
             else:
-                if "nobot" in bio['note'].lower():
-                    api.status_reply(n['status'], mensaje_nobot)
+                # Find account if it is not known by the server
+                try:
+                    api.search_v2(target, result_type="accounts")
+                    bio = api.account_lookup(target)
+                except:
+                    print(traceback.format_exc())
+                    api.status_post(user + mensaje_no_encontrado, in_reply_to_id=n['status']['id'], visibility="direct" )
                 else:
-                    #api.status_post(mensaje + target + "!", in_reply_to_id=n['status']['id'], visibility="unlisted")
-                    if check_mode(mode_croqueta_words, content):
-                        new_status = api.status_post(target + " " + mensaje_croqueta, visibility="unlisted")
-                    elif check_mode(mode_cumple_words, content):
-                        new_status = api.status_post(mensaje_cumple[0] + target + mensaje_cumple[1], visibility="unlisted")
-                    elif check_mode(["orgullo"], content):
-                        new_status = api.status_post(target + " " + mensaje_orgullo, visibility="unlisted")
-                    else: 
-                        new_status = api.status_post(mensaje + target + "!", visibility="unlisted")
-                    api.status_reply(n['status'], 'Tu muestra de aprecio ha sido enviada ❤️ ' + new_status['url'], visibility="direct")
-    elif first_mention == "@apreciabot" and n['status']['in_reply_to_id'] == None:
-        api.status_reply(n['status'], mensaje_aviso, visibility='direct')
+                    if "nobot" in bio['note'].lower():
+                        api.status_reply(n['status'], mensaje_nobot)
+                    else:
+                        #api.status_post(mensaje + target + "!", in_reply_to_id=n['status']['id'], visibility="unlisted")
+                        if check_mode(mode_croqueta_words, content):
+                            new_status = api.status_post(target + " " + mensaje_croqueta, visibility="unlisted")
+                        elif check_mode(mode_cumple_words, content):
+                            new_status = api.status_post(mensaje_cumple[0] + target + mensaje_cumple[1], visibility="unlisted")
+                        elif check_mode(["orgullo"], content):
+                            new_status = api.status_post(target + " " + mensaje_orgullo, visibility="unlisted")
+                        else: 
+                            new_status = api.status_post(mensaje + target + "!", visibility="unlisted")
+                        api.status_reply(n['status'], 'Tu muestra de aprecio ha sido enviada ❤️ ' + new_status['url'] + '\n\n Marca como favorita esta notificación para eliminarla.', visibility="direct")
+        elif first_mention == "@apreciabot" and n['status']['in_reply_to_id'] == None:
+            api.status_reply(n['status'], mensaje_aviso, visibility='direct')
 

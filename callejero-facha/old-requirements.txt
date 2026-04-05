@@ -1,0 +1,6 @@
+plotly~=6.2.0
+pandas~=2.3.1
+numpy~=2.3.1
+kaleido~=1.0.0
+requests~=2.32.4
+Mastodon.py~=2.0.1
