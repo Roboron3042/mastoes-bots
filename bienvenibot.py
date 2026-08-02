@@ -4,7 +4,7 @@ from common import list_append
 from common import list_write
 
 # Messages
-message = "¡Hola, te doy la bienvenida a Mastodon :mastodon: en https://masto.es!\n\nTe recomiendo que empieces escribiendo una publicación con la etiqueta #presentación y tus intereses para darte a conocer.\n\n¡Espero que tengas un buen comienzo! Si necesitas ayuda, ¡cuenta conmigo!"
+message = "¡Hola, te doy la bienvenida a Mastodon :mastodon: en https://masto.es!\n\nTe recomiendo que empieces escribiendo una publicación con la etiqueta #presentación y tus intereses para darte a conocer.\n\nTe comparto también una Colección con cuentas interesantes de https://masto.es que puedes seguir para ir llenando de contenido variado tu Inicio: https://masto.es/collections/116769786783845366\n\n¡Espero que tengas un buen comienzo! Si necesitas ayuda, ¡cuenta conmigo!"
 
 
 # Initialization
