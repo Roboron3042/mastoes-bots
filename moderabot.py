@@ -1,14 +1,17 @@
 from common import get_api
 from common import list_read
 from common import list_append
+import re
 
 bot_name = 'moderabot'
 api = get_api('masto.es', bot_name)
 notifications = api.notifications(types=["admin.sign_up"])
 
-pending_accounts = api.admin_accounts_v2(status="pending")
+pending_accounts = api.admin_accounts_v2(status="pending", origin="local")
 for account in pending_accounts:
-    api.admin_account_approve(account)
+    lang = account['locale']
+    if isinstance(lang, str) and re.fullmatch(r'es.*', lang):
+        api.admin_account_approve(account)
 
 # Vietnamese accounts
 forbidden_words = list_read('moderabot_forbidden_words')
